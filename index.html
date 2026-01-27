@@ -22,22 +22,30 @@
         }
         #monitor {
             border: 4px solid #00FF00;
-            padding: 5vw;
-            width: 85vw;
-            max-width: 600px;
+            padding: 20px;
+            width: 90vw;
+            max-width: 700px;
+            aspect-ratio: 4/3; /* Enforce landscape/monitor shape */
             box-shadow: 0 0 20px #00FF00, 0 0 5px #00AA00 inset;
             text-align: center;
             background: rgba(0, 20, 0, 0.9);
             transition: box-shadow 0.5s, border-color 0.5s;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Center content vertically in the box */
+            /* Ensure it doesn't get too tall on small screens if content overflows, 
+               but aspect-ratio should handle the shape preference. */
+            overflow-y: auto; /* Scroll if content is too big for the ratio */
         }
         #avatar {
             white-space: pre;
-            font-size: clamp(20px, 4vw, 30px); /* Responsive scaling */
-            line-height: 1; /* Tight line height for block feel */
-            margin-bottom: 30px;
+            font-size: clamp(16px, 2.5vw, 24px); /* Slightly adjusted for fit */
+            line-height: 1; 
+            margin-bottom: 20px;
             color: #00FF00;
-            font-weight: normal; /* VT323 is already bold-ish */
+            font-weight: normal; 
             display: inline-block;
+            flex-shrink: 0;
         }
         
         /* Animations */
