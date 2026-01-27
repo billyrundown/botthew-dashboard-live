@@ -2,24 +2,29 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agent Botthew Activity Monitor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
         body {
             background-color: #0a0a0a;
             color: #00FF00;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: 'VT323', monospace;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            image-rendering: pixelated;
+            overflow: hidden; /* Prevent scrollbars from bounce */
         }
         #monitor {
             border: 4px solid #00FF00;
-            padding: 20px;
-            width: 600px;
+            padding: 5vw;
+            width: 85vw;
+            max-width: 600px;
             box-shadow: 0 0 20px #00FF00, 0 0 5px #00AA00 inset;
             text-align: center;
             background: rgba(0, 20, 0, 0.9);
@@ -27,11 +32,12 @@
         }
         #avatar {
             white-space: pre;
-            font-size: 14px;
-            line-height: 14px;
-            margin-bottom: 20px;
+            font-size: clamp(20px, 4vw, 30px); /* Responsive scaling */
+            line-height: 1; /* Tight line height for block feel */
+            margin-bottom: 30px;
             color: #00FF00;
-            font-weight: bold;
+            font-weight: normal; /* VT323 is already bold-ish */
+            display: inline-block;
         }
         
         /* Animations */
@@ -50,7 +56,7 @@
         }
         @keyframes happyJump {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-15px); }
         }
         @keyframes alertShake {
             0% { transform: translate(1px, 1px) rotate(0deg); }
@@ -60,42 +66,47 @@
         .info-row {
             display: flex;
             justify-content: space-between;
-            margin: 10px 0;
+            margin: 15px 0;
             border-bottom: 1px solid #004400;
             padding-bottom: 5px;
+            font-size: 1.5em; /* Bigger text */
         }
         .label { color: #00AA00; }
         .value { font-weight: bold; }
+        
         #message {
-            margin-top: 20px;
-            font-style: italic;
+            margin-top: 30px;
+            font-size: 1.8em;
             color: #00DD00;
             min-height: 1.2em;
+            line-height: 1.2;
         }
         
         /* History Section */
         #history-container {
-            margin-top: 20px;
+            margin-top: 30px;
             border-top: 2px dashed #004400;
-            padding-top: 10px;
+            padding-top: 15px;
             text-align: left;
         }
         .history-title {
             color: #00AA00;
-            font-size: 0.8em;
-            margin-bottom: 5px;
+            font-size: 1.2em;
+            margin-bottom: 10px;
             text-transform: uppercase;
         }
         .history-item {
-            font-size: 0.8em;
+            font-size: 1.1em;
             color: #008800;
-            margin-bottom: 4px;
+            margin-bottom: 8px;
             display: flex;
+            flex-wrap: wrap; /* Allow wrapping on small screens */
         }
         .history-time {
             color: #005500;
-            margin-right: 10px;
+            margin-right: 15px;
             min-width: 140px;
+            font-family: monospace; /* Keep time aligned */
         }
         .history-msg {
             color: #00AA00;
@@ -103,10 +114,10 @@
 
         .scan-line {
             width: 100%;
-            height: 2px;
+            height: 4px;
             background: rgba(0, 255, 0, 0.1);
             opacity: 0.1;
-            animation: scan 6s linear infinite;
+            animation: scan 4s linear infinite;
             pointer-events: none;
             position: absolute;
             top: 0;
