@@ -22,8 +22,9 @@
         #monitor {
             border: 4px solid #00FF00;
             padding: 20px;
-            width: 600px;
-            max-width: 90vw;
+            width: min(90vw, 1100px);
+            min-height: 80vh;
+            box-sizing: border-box;
             box-shadow: 0 0 20px #00FF00, 0 0 5px #00AA00 inset;
             text-align: center;
             background: rgba(0, 20, 0, 0.9);
@@ -167,19 +168,25 @@
         const partyContainer = document.getElementById('party-container');
         
         if (typeof CHARACTERS !== 'undefined') {
-            CHARACTERS.forEach((char, index) => {
+            CHARACTERS.forEach((char) => {
                 const charEl = document.createElement('div');
                 charEl.className = 'character';
-                
+
                 // Add random delay to animation so they don't sync perfectly
                 // Using negative delay to start them at different points immediately
-                const delay = -(Math.random() * 2); 
+                const delay = -(Math.random() * 2);
                 charEl.style.animationDelay = `${delay}s`;
-                
-                charEl.innerHTML = `
-                    <div class="char-art">${char.art}</div>
-                    <div class="char-name">${char.name}</div>
-                `;
+
+                const artEl = document.createElement('div');
+                artEl.className = 'char-art';
+                artEl.textContent = char.art;
+
+                const nameEl = document.createElement('div');
+                nameEl.className = 'char-name';
+                nameEl.textContent = char.name;
+
+                charEl.appendChild(artEl);
+                charEl.appendChild(nameEl);
                 partyContainer.appendChild(charEl);
             });
         }

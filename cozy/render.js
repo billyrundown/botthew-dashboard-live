@@ -9,12 +9,9 @@ const spritesImage = new Image();
 spritesImage.src = 'sprites.png?v=' + Date.now(); // FORCE NEW VERSION
 
 // Sprite Sheet Configuration
-// Assumes 1024x1024 sheet with 3x3 grid
-const SHEET_SIZE = 1024;
+// Sheet is 1408x768 with a 4x3 grid
 const ROWS = 3;
-const COLS = 3;
-const SPRITE_W = SHEET_SIZE / COLS; // ~341px
-const SPRITE_H = SHEET_SIZE / ROWS; // ~341px
+const COLS = 4;
 
 // Character Definitions
 const CHARS = [
@@ -33,8 +30,10 @@ function draw() {
     }
 
     // 2. Draw Characters
-    if (spritesImage.complete) {
+    if (spritesImage.complete && spritesImage.naturalWidth) {
         const time = Date.now();
+        const spriteW = spritesImage.naturalWidth / COLS;
+        const spriteH = spritesImage.naturalHeight / ROWS;
         
         CHARS.forEach((char, index) => {
             // Animation: Simple Idle Bounce
@@ -45,20 +44,20 @@ function draw() {
             // Source Calculation (Middle column is usually the best "idle" pose in 3-frame sheets)
             // But let's cycle 0 -> 1 -> 2 for walking animation if we wanted
             // For now, let's stick to column 1 (center) as static pose, or animate cols
-            const frame = Math.floor(time / 500) % 3; 
-            const sx = frame * SPRITE_W; 
-            const sy = char.row * SPRITE_H;
+            const frame = Math.floor(time / 500) % COLS; 
+            const sx = frame * spriteW; 
+            const sy = char.row * spriteH;
             
             // Destination Calculation
-            const dw = SPRITE_W * char.scale;
-            const dh = SPRITE_H * char.scale;
+            const dw = spriteW * char.scale;
+            const dh = spriteH * char.scale;
             const dx = char.x;
             const dy = char.y + bounceY;
 
             // Draw Sprite
             ctx.drawImage(spritesImage, 
-                sx, sy, SPRITE_W, SPRITE_H, // Source
-                dx, dy, dw, dh              // Destination
+                sx, sy, spriteW, spriteH, // Source
+                dx, dy, dw, dh            // Destination
             );
             
             // Draw Name Label
