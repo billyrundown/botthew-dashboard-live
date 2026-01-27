@@ -31,6 +31,11 @@
             margin-bottom: 20px;
             color: #00FF00;
             font-weight: bold;
+            animation: idleBounce 2s infinite ease-in-out;
+        }
+        @keyframes idleBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
         }
         .info-row {
             display: flex;
