@@ -23,6 +23,7 @@
             box-shadow: 0 0 20px #00FF00, 0 0 5px #00AA00 inset;
             text-align: center;
             background: rgba(0, 20, 0, 0.9);
+            transition: box-shadow 0.5s, border-color 0.5s;
         }
         #avatar {
             white-space: pre;
@@ -31,12 +32,31 @@
             margin-bottom: 20px;
             color: #00FF00;
             font-weight: bold;
-            animation: idleBounce 2s infinite ease-in-out;
         }
+        
+        /* Animations */
+        .anim-idle { animation: idleBounce 2s infinite ease-in-out; }
+        .anim-working { animation: workingPulse 0.2s infinite alternate; }
+        .anim-happy { animation: happyJump 0.5s infinite; }
+        .anim-alert { animation: alertShake 0.1s infinite; color: #FF0000 !important; }
+
         @keyframes idleBounce {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-5px); }
         }
+        @keyframes workingPulse {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0.8; transform: scale(1.02); }
+        }
+        @keyframes happyJump {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes alertShake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            100% { transform: translate(-1px, -2px) rotate(-1deg); }
+        }
+
         .info-row {
             display: flex;
             justify-content: space-between;
@@ -101,15 +121,7 @@
 <body>
     <div class="scan-line"></div>
     <div id="monitor">
-        <div id="avatar">
-       .---.
-     .'  _  '.
-    /   [O]   \
-   |  ( _ )  |
-    \  ---  /
-     '-----'
-   [ BOTTHEW ]
-        </div>
+        <div id="avatar"></div>
         
         <div class="info-row">
             <span class="label">STATUS:</span>
@@ -128,36 +140,94 @@
 
         <div id="history-container">
             <div class="history-title">Recent Logs</div>
-            <div id="history-list">
-                <!-- Populated via JS -->
-            </div>
+            <div id="history-list"></div>
         </div>
     </div>
 
     <script>
+        const FACES = {
+            neutral: `
+       .---.
+     .'  _  '.
+    /   [O]   \\
+   |  ( _ )  |
+    \\  ---  /
+     '-----'
+   [ BOTTHEW ]`,
+            happy: `
+       .---.
+     .'  ^  '.
+    /   [^]   \\
+   |  ( v )  |
+    \\  ---  /
+     '-----'
+   [ BOTTHEW ]`,
+            working: `
+       .---.
+     .'  _  '.
+    /   [-]   \\
+   |  ( o )  |
+    \\  ---  /
+     '-----'
+   [ WORKTHEW ]`,
+            alert: `
+       .---.
+     .'  !  '.
+    /   [X]   \\
+   |  ( ~ )  |
+    \\  ---  /
+     '-----'
+   [ ERROTHEW ]`
+        };
+
+        const ANIMATIONS = {
+            neutral: 'anim-idle',
+            happy: 'anim-happy',
+            working: 'anim-working',
+            alert: 'anim-alert'
+        };
+
         async function fetchStatus() {
             try {
                 const response = await fetch('status.json?t=' + new Date().getTime());
                 if (!response.ok) throw new Error('Network response was not ok');
                 const data = await response.json();
                 
-                // Update Current
+                // Update Text
                 document.getElementById('status-val').textContent = data.status || "UNKNOWN";
                 document.getElementById('last-active').textContent = data.last_active || "UNKNOWN";
                 document.getElementById('task').textContent = data.task || "IDLE";
                 document.getElementById('message').textContent = `"${data.message || ''}"`;
 
+                // Update Avatar & Mood
+                const mood = data.mood || 'neutral';
+                const avatarEl = document.getElementById('avatar');
+                
+                // Set ASCII Art
+                avatarEl.textContent = FACES[mood] || FACES['neutral'];
+                
+                // Reset Animations
+                avatarEl.className = '';
+                avatarEl.classList.add(ANIMATIONS[mood] || ANIMATIONS['neutral']);
+
+                // Handle Alert Color Override on Monitor Border
+                const monitor = document.getElementById('monitor');
+                if (mood === 'alert') {
+                    monitor.style.borderColor = '#FF0000';
+                    monitor.style.boxShadow = '0 0 20px #FF0000, 0 0 5px #AA0000 inset';
+                    document.body.style.color = '#FF0000';
+                } else {
+                    monitor.style.borderColor = '#00FF00';
+                    monitor.style.boxShadow = '0 0 20px #00FF00, 0 0 5px #00AA00 inset';
+                    document.body.style.color = '#00FF00';
+                }
+
                 // Update History
                 const historyList = document.getElementById('history-list');
-                historyList.innerHTML = ''; // Clear current
+                historyList.innerHTML = ''; 
                 
                 if (data.history && Array.isArray(data.history)) {
-                    // Skip the very first one (index 0) because it's usually displayed as current status
-                    // OR show them all if we want a true "log". Let's show index 1, 2, 3 to avoid duplication?
-                    // User said "timeline of PREVIOUS tasks". So let's slice(1, 4).
-                    
                     const pastLogs = data.history.slice(1, 4); 
-                    
                     pastLogs.forEach(log => {
                         const row = document.createElement('div');
                         row.className = 'history-item';
@@ -171,7 +241,6 @@
 
             } catch (error) {
                 console.error('Error fetching status:', error);
-                document.getElementById('status-val').textContent = "OFFLINE";
             }
         }
 
