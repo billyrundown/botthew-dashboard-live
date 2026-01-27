@@ -9,9 +9,9 @@ const spritesImage = new Image();
 spritesImage.src = 'sprites.png?v=' + Date.now(); // FORCE NEW VERSION
 
 // Sprite Sheet Configuration
-// Sheet is 1408x768 with a 4x3 grid
+// Sheet is a 3x3 grid.
 const ROWS = 3;
-const COLS = 4;
+const COLS = 3;
 
 // Character Definitions
 const CHARS = [
