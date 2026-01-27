@@ -6,7 +6,7 @@ const bgImage = new Image();
 bgImage.src = 'room.png';
 
 const spritesImage = new Image();
-spritesImage.src = 'sprites.png';
+spritesImage.src = 'sprites.png?v=' + Date.now(); // FORCE NEW VERSION
 
 // Sprite Sheet Configuration
 // Assumes 1024x1024 sheet with 3x3 grid
