@@ -47,6 +47,35 @@
             color: #00DD00;
             min-height: 1.2em;
         }
+        
+        /* History Section */
+        #history-container {
+            margin-top: 20px;
+            border-top: 2px dashed #004400;
+            padding-top: 10px;
+            text-align: left;
+        }
+        .history-title {
+            color: #00AA00;
+            font-size: 0.8em;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+        .history-item {
+            font-size: 0.8em;
+            color: #008800;
+            margin-bottom: 4px;
+            display: flex;
+        }
+        .history-time {
+            color: #005500;
+            margin-right: 10px;
+            min-width: 140px;
+        }
+        .history-msg {
+            color: #00AA00;
+        }
+
         .scan-line {
             width: 100%;
             height: 2px;
@@ -91,20 +120,50 @@
         </div>
         
         <div id="message"></div>
+
+        <div id="history-container">
+            <div class="history-title">Recent Logs</div>
+            <div id="history-list">
+                <!-- Populated via JS -->
+            </div>
+        </div>
     </div>
 
     <script>
         async function fetchStatus() {
             try {
-                // Add timestamp to prevent caching
                 const response = await fetch('status.json?t=' + new Date().getTime());
                 if (!response.ok) throw new Error('Network response was not ok');
                 const data = await response.json();
                 
+                // Update Current
                 document.getElementById('status-val').textContent = data.status || "UNKNOWN";
                 document.getElementById('last-active').textContent = data.last_active || "UNKNOWN";
                 document.getElementById('task').textContent = data.task || "IDLE";
                 document.getElementById('message').textContent = `"${data.message || ''}"`;
+
+                // Update History
+                const historyList = document.getElementById('history-list');
+                historyList.innerHTML = ''; // Clear current
+                
+                if (data.history && Array.isArray(data.history)) {
+                    // Skip the very first one (index 0) because it's usually displayed as current status
+                    // OR show them all if we want a true "log". Let's show index 1, 2, 3 to avoid duplication?
+                    // User said "timeline of PREVIOUS tasks". So let's slice(1, 4).
+                    
+                    const pastLogs = data.history.slice(1, 4); 
+                    
+                    pastLogs.forEach(log => {
+                        const row = document.createElement('div');
+                        row.className = 'history-item';
+                        row.innerHTML = `
+                            <span class="history-time">[${log.timestamp}]</span>
+                            <span class="history-msg">${log.task}</span>
+                        `;
+                        historyList.appendChild(row);
+                    });
+                }
+
             } catch (error) {
                 console.error('Error fetching status:', error);
                 document.getElementById('status-val').textContent = "OFFLINE";
@@ -112,7 +171,7 @@
         }
 
         fetchStatus();
-        setInterval(fetchStatus, 30000); // Poll every 30s
+        setInterval(fetchStatus, 30000); 
     </script>
 </body>
 </html>
