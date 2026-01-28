@@ -80,7 +80,10 @@ draw();
 // Status Fetcher
 async function fetchStatus() {
     try {
-        const response = await fetch('../status.json?t=' + Date.now());
+        // Fetch from Gist Raw URL (High speed, decoupled from Git commits)
+        const GIST_URL = "https://gist.githubusercontent.com/botthew/c7197e494c806aa7c9830543fd6a762f/raw/status.json";
+        const response = await fetch(GIST_URL + '?t=' + Date.now());
+        
         if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
         
@@ -93,5 +96,6 @@ async function fetchStatus() {
     }
 }
 
+// Increased poll rate to 5s for real-time feel
 fetchStatus();
-setInterval(fetchStatus, 30000);
+setInterval(fetchStatus, 5000);
