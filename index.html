@@ -223,7 +223,7 @@
                 historyList.innerHTML = ''; 
                 
                 if (data.history && Array.isArray(data.history)) {
-                    const pastLogs = data.history.slice(1, 4); 
+                    const pastLogs = data.history.slice(0, 3); 
                     pastLogs.forEach(log => {
                         const row = document.createElement('div');
                         row.className = 'history-item';
