@@ -33,6 +33,6 @@ Example:
 ### Implementation notes
 
 - `update_status.js` updates the local `status.json` structure (incl. history)
-- `publish_status.sh` pushes the contents of `status.json` to the **Gist** via `gh api`
+- `publish_status.sh` pushes the contents of `status.json` to the **Gist** via `gh api` (uses `/data/.openclaw/workspace/bin/gh` by default)
 
 If you change the Gist, update the ID in `publish_status.sh` (and `index.html`).

@@ -28,7 +28,8 @@ open('.tmp_gist_payload.json','w',encoding='utf-8').write(json.dumps(payload))
 PY
 
 # Requires gh auth
-gh api -X PATCH "gists/${GIST_ID}" --input .tmp_gist_payload.json > /dev/null
+GH_BIN="${GH_BIN:-/data/.openclaw/workspace/bin/gh}"
+"$GH_BIN" api -X PATCH "gists/${GIST_ID}" --input .tmp_gist_payload.json > /dev/null
 rm -f .tmp_gist_payload.json
 
 echo "Status published to Gist: $STATUS | $TASK | $MOOD"
