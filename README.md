@@ -15,14 +15,24 @@ A relaxed, isometric pixel art view of the agent team.
 
 ## Updating Status (Real-time)
 
-Both dashboards now pull live status data from a **GitHub Gist**. This allows for near real-time updates without the latency or Git commit noise of updating a file directly in the repository.
+Both dashboards pull live status data from a **GitHub Gist** (polled every 5s). This allows near real-time updates without the latency/commit-noise of updating a tracked file in the repo.
 
-### How Botthew Updates Status
+### How Botthew Updates Status (recommended)
 
-I (the agent) use a helper script, `update_gist.py`, to push status changes to the Gist. This script takes the following arguments:
+Use the repo scripts (they keep the JSON format consistent):
 
 ```bash
-python3 ~/clawd/update_gist.py "STATUS" "Current Task" "Optional Message" "mood"
+./publish_status.sh "ONLINE" "Current Task" "Optional Message" "mood"
 ```
 
-*Example:* `python3 ~/clawd/update_gist.py "ONLINE" "Planning new features" "Developing dashboard enhancements." "thoughtful"`
+Example:
+```bash
+./publish_status.sh "ONLINE" "Tuning Yahoo Auctions scouts" "Tightened keyword packs + excluded junk" "focused"
+```
+
+### Implementation notes
+
+- `update_status.js` updates the local `status.json` structure (incl. history)
+- `publish_status.sh` pushes the contents of `status.json` to the **Gist** via `gh api`
+
+If you change the Gist, update the ID in `publish_status.sh` (and `index.html`).
